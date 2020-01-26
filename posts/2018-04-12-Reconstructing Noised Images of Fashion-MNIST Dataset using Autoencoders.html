@@ -1,0 +1,510 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+<title>2018-04-12-Reconstructing Noised Images of Fashion-MNIST Dataset using Autoencoders</title><link href='https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext' rel='stylesheet' type='text/css' /><style type='text/css'>html {overflow-x: initial !important;}:root { --bg-color:#ffffff; --text-color:#333333; --select-text-bg-color:#B5D6FC; --select-text-font-color:auto; --monospace:"Lucida Console",Consolas,"Courier",monospace; }
+html { font-size: 14px; background-color: var(--bg-color); color: var(--text-color); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+body { margin: 0px; padding: 0px; height: auto; bottom: 0px; top: 0px; left: 0px; right: 0px; font-size: 1rem; line-height: 1.42857; overflow-x: hidden; background: inherit; tab-size: 4; }
+iframe { margin: auto; }
+a.url { word-break: break-all; }
+a:active, a:hover { outline: 0px; }
+.in-text-selection, ::selection { text-shadow: none; background: var(--select-text-bg-color); color: var(--select-text-font-color); }
+#write { margin: 0px auto; height: auto; width: inherit; word-break: normal; overflow-wrap: break-word; position: relative; white-space: normal; overflow-x: visible; padding-top: 40px; }
+#write.first-line-indent p { text-indent: 2em; }
+#write.first-line-indent li p, #write.first-line-indent p * { text-indent: 0px; }
+#write.first-line-indent li { margin-left: 2em; }
+.for-image #write { padding-left: 8px; padding-right: 8px; }
+body.typora-export { padding-left: 30px; padding-right: 30px; }
+.typora-export .footnote-line, .typora-export li, .typora-export p { white-space: pre-wrap; }
+@media screen and (max-width: 500px) {
+  body.typora-export { padding-left: 0px; padding-right: 0px; }
+  #write { padding-left: 20px; padding-right: 20px; }
+  .CodeMirror-sizer { margin-left: 0px !important; }
+  .CodeMirror-gutters { display: none !important; }
+}
+#write li > figure:last-child { margin-bottom: 0.5rem; }
+#write ol, #write ul { position: relative; }
+img { max-width: 100%; vertical-align: middle; }
+button, input, select, textarea { color: inherit; font: inherit; }
+input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
+*, ::after, ::before { box-sizing: border-box; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p, #write pre { width: inherit; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p { position: relative; }
+p { line-height: inherit; }
+h1, h2, h3, h4, h5, h6 { break-after: avoid-page; break-inside: avoid; orphans: 2; }
+p { orphans: 4; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
+.md-math-block, .md-rawblock, h1, h2, h3, h4, h5, h6, p { margin-top: 1rem; margin-bottom: 1rem; }
+.hidden { display: none; }
+.md-blockmeta { color: rgb(204, 204, 204); font-weight: 700; font-style: italic; }
+a { cursor: pointer; }
+sup.md-footnote { padding: 2px 4px; background-color: rgba(238, 238, 238, 0.7); color: rgb(85, 85, 85); border-radius: 4px; cursor: pointer; }
+sup.md-footnote a, sup.md-footnote a:hover { color: inherit; text-transform: inherit; text-decoration: inherit; }
+#write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; }
+figure { overflow-x: auto; margin: 1.2em 0px; max-width: calc(100% + 16px); padding: 0px; }
+figure > table { margin: 0px !important; }
+tr { break-inside: avoid; break-after: auto; }
+thead { display: table-header-group; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; text-align: left; }
+table.md-table td { min-width: 32px; }
+.CodeMirror-gutters { border-right: 0px; background-color: inherit; }
+.CodeMirror-linenumber { user-select: none; }
+.CodeMirror { text-align: left; }
+.CodeMirror-placeholder { opacity: 0.3; }
+.CodeMirror pre { padding: 0px 4px; }
+.CodeMirror-lines { padding: 0px; }
+div.hr:focus { cursor: none; }
+#write pre { white-space: pre-wrap; }
+#write.fences-no-line-wrapping pre { white-space: pre; }
+#write pre.ty-contain-cm { white-space: normal; }
+.CodeMirror-gutters { margin-right: 4px; }
+.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background: inherit; position: relative !important; }
+.md-diagram-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
+#write .md-fences.mock-cm { white-space: pre-wrap; }
+.md-fences.md-fences-with-lineno { padding-left: 0px; }
+#write.fences-no-line-wrapping .md-fences.mock-cm { white-space: pre; overflow-x: auto; }
+.md-fences.mock-cm.md-fences-with-lineno { padding-left: 8px; }
+.CodeMirror-line, twitterwidget { break-inside: avoid; }
+.footnotes { opacity: 0.8; font-size: 0.9rem; margin-top: 1em; margin-bottom: 1em; }
+.footnotes + .footnotes { margin-top: 0px; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; background: 0px 0px; text-decoration: none; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; -webkit-tap-highlight-color: transparent; line-height: normal; font-weight: 400; text-align: left; box-sizing: content-box; direction: ltr; }
+li div { padding-top: 0px; }
+blockquote { margin: 1rem 0px; }
+li .mathjax-block, li p { margin: 0.5rem 0px; }
+li { margin: 0px; position: relative; }
+blockquote > :last-child { margin-bottom: 0px; }
+blockquote > :first-child, li > :first-child { margin-top: 0px; }
+.footnotes-area { color: rgb(136, 136, 136); margin-top: 0.714rem; padding-bottom: 0.143rem; white-space: normal; }
+#write .footnote-line { white-space: pre-wrap; }
+@media print {
+  body, html { border: 1px solid transparent; height: 99%; break-after: avoid; break-before: avoid; }
+  #write { margin-top: 0px; padding-top: 0px; border-color: transparent !important; }
+  .typora-export * { -webkit-print-color-adjust: exact; }
+  html.blink-to-pdf { font-size: 13px; }
+  .typora-export #write { padding-left: 32px; padding-right: 32px; padding-bottom: 0px; break-after: avoid; }
+  .typora-export #write::after { height: 0px; }
+}
+.footnote-line { margin-top: 0.714em; font-size: 0.7em; }
+a img, img a { cursor: pointer; }
+pre.md-meta-block { font-size: 0.8rem; min-height: 0.8rem; white-space: pre-wrap; background: rgb(204, 204, 204); display: block; overflow-x: hidden; }
+p > .md-image:only-child:not(.md-img-error) img, p > img:only-child { display: block; margin: auto; }
+p > .md-image:only-child { display: inline-block; width: 100%; }
+#write .MathJax_Display { margin: 0.8em 0px 0px; }
+.md-math-block { width: 100%; }
+.md-math-block:not(:empty)::after { display: none; }
+[contenteditable="true"]:active, [contenteditable="true"]:focus { outline: 0px; box-shadow: none; }
+.md-task-list-item { position: relative; list-style-type: none; }
+.task-list-item.md-task-list-item { padding-left: 0px; }
+.md-task-list-item > input { position: absolute; top: 0px; left: 0px; margin-left: -1.2em; margin-top: calc(1em - 10px); border: none; }
+.math { font-size: 1rem; }
+.md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-radius: 10px; }
+.md-toc-content { position: relative; margin-left: 0px; }
+.md-toc-content::after, .md-toc::after { display: none; }
+.md-toc-item { display: block; color: rgb(65, 131, 196); }
+.md-toc-item a { text-decoration: none; }
+.md-toc-inner:hover { text-decoration: underline; }
+.md-toc-inner { display: inline-block; cursor: pointer; }
+.md-toc-h1 .md-toc-inner { margin-left: 0px; font-weight: 700; }
+.md-toc-h2 .md-toc-inner { margin-left: 2em; }
+.md-toc-h3 .md-toc-inner { margin-left: 4em; }
+.md-toc-h4 .md-toc-inner { margin-left: 6em; }
+.md-toc-h5 .md-toc-inner { margin-left: 8em; }
+.md-toc-h6 .md-toc-inner { margin-left: 10em; }
+@media screen and (max-width: 48em) {
+  .md-toc-h3 .md-toc-inner { margin-left: 3.5em; }
+  .md-toc-h4 .md-toc-inner { margin-left: 5em; }
+  .md-toc-h5 .md-toc-inner { margin-left: 6.5em; }
+  .md-toc-h6 .md-toc-inner { margin-left: 8em; }
+}
+a.md-toc-inner { font-size: inherit; font-style: inherit; font-weight: inherit; line-height: inherit; }
+.footnote-line a:not(.reversefootnote) { color: inherit; }
+.md-attr { display: none; }
+.md-fn-count::after { content: "."; }
+code, pre, samp, tt { font-family: var(--monospace); }
+kbd { margin: 0px 0.1em; padding: 0.1em 0.6em; font-size: 0.8em; color: rgb(36, 39, 41); background: rgb(255, 255, 255); border: 1px solid rgb(173, 179, 185); border-radius: 3px; box-shadow: rgba(12, 13, 14, 0.2) 0px 1px 0px, rgb(255, 255, 255) 0px 0px 0px 2px inset; white-space: nowrap; vertical-align: middle; }
+.md-comment { color: rgb(162, 127, 3); opacity: 0.8; font-family: var(--monospace); }
+code { text-align: left; vertical-align: initial; }
+a.md-print-anchor { white-space: pre !important; border-width: initial !important; border-style: none !important; border-color: initial !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: 0px !important; background: 0px 0px !important; text-decoration: initial !important; text-shadow: initial !important; }
+.md-inline-math .MathJax_SVG .noError { display: none !important; }
+.html-for-mac .inline-math-svg .MathJax_SVG { vertical-align: 0.2px; }
+.md-math-block .MathJax_SVG_Display { text-align: center; margin: 0px; position: relative; text-indent: 0px; max-width: none; max-height: none; min-height: 0px; min-width: 100%; width: auto; overflow-y: hidden; display: block !important; }
+.MathJax_SVG_Display, .md-inline-math .MathJax_SVG_Display { width: auto; margin: inherit; display: inline-block !important; }
+.MathJax_SVG .MJX-monospace { font-family: var(--monospace); }
+.MathJax_SVG .MJX-sans-serif { font-family: sans-serif; }
+.MathJax_SVG { display: inline; font-style: normal; font-weight: 400; line-height: normal; zoom: 90%; text-indent: 0px; text-align: left; text-transform: none; letter-spacing: normal; word-spacing: normal; overflow-wrap: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0px; min-height: 0px; border: 0px; padding: 0px; margin: 0px; }
+.MathJax_SVG * { transition: none 0s ease 0s; }
+.MathJax_SVG_Display svg { vertical-align: middle !important; margin-bottom: 0px !important; margin-top: 0px !important; }
+.os-windows.monocolor-emoji .md-emoji { font-family: "Segoe UI Symbol", sans-serif; }
+.md-diagram-panel > svg { max-width: 100%; }
+[lang="mermaid"] svg, [lang="flow"] svg { max-width: 100%; height: auto; }
+[lang="mermaid"] .node text { font-size: 1rem; }
+table tr th { border-bottom: 0px; }
+video { max-width: 100%; display: block; margin: 0px auto; }
+iframe { max-width: 100%; width: 100%; border: none; }
+.highlight td, .highlight tr { border: 0px; }
+svg[id^="mermaidChart"] { line-height: 1em; }
+mark { background: rgb(255, 255, 0); color: rgb(0, 0, 0); }
+.md-html-inline .md-plain, .md-html-inline strong, mark .md-inline-math, mark strong { color: inherit; }
+mark .md-meta { color: rgb(0, 0, 0); opacity: 0.3 !important; }
+
+
+:root {
+    --side-bar-bg-color: #fafafa;
+    --control-text-color: #777;
+}
+
+@include-when-export url(https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext);
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: "Open Sans","Clear Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: rgb(51, 51, 51);
+    line-height: 1.6;
+}
+
+#write {
+    max-width: 860px;
+  	margin: 0 auto;
+  	padding: 30px;
+    padding-bottom: 100px;
+}
+#write > ul:first-child,
+#write > ol:first-child{
+    margin-top: 30px;
+}
+
+a {
+    color: #4183C4;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    position: relative;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    line-height: 1.4;
+    cursor: text;
+}
+h1:hover a.anchor,
+h2:hover a.anchor,
+h3:hover a.anchor,
+h4:hover a.anchor,
+h5:hover a.anchor,
+h6:hover a.anchor {
+    text-decoration: none;
+}
+h1 tt,
+h1 code {
+    font-size: inherit;
+}
+h2 tt,
+h2 code {
+    font-size: inherit;
+}
+h3 tt,
+h3 code {
+    font-size: inherit;
+}
+h4 tt,
+h4 code {
+    font-size: inherit;
+}
+h5 tt,
+h5 code {
+    font-size: inherit;
+}
+h6 tt,
+h6 code {
+    font-size: inherit;
+}
+h1 {
+    padding-bottom: .3em;
+    font-size: 2.25em;
+    line-height: 1.2;
+    border-bottom: 1px solid #eee;
+}
+h2 {
+   padding-bottom: .3em;
+    font-size: 1.75em;
+    line-height: 1.225;
+    border-bottom: 1px solid #eee;
+}
+h3 {
+    font-size: 1.5em;
+    line-height: 1.43;
+}
+h4 {
+    font-size: 1.25em;
+}
+h5 {
+    font-size: 1em;
+}
+h6 {
+   font-size: 1em;
+    color: #777;
+}
+p,
+blockquote,
+ul,
+ol,
+dl,
+table{
+    margin: 0.8em 0;
+}
+li>ol,
+li>ul {
+    margin: 0 0;
+}
+hr {
+    height: 2px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+    overflow: hidden;
+    box-sizing: content-box;
+}
+
+li p.first {
+    display: inline-block;
+}
+ul,
+ol {
+    padding-left: 30px;
+}
+ul:first-child,
+ol:first-child {
+    margin-top: 0;
+}
+ul:last-child,
+ol:last-child {
+    margin-bottom: 0;
+}
+blockquote {
+    border-left: 4px solid #dfe2e5;
+    padding: 0 15px;
+    color: #777777;
+}
+blockquote blockquote {
+    padding-right: 0;
+}
+table {
+    padding: 0;
+    word-break: initial;
+}
+table tr {
+    border-top: 1px solid #dfe2e5;
+    margin: 0;
+    padding: 0;
+}
+table tr:nth-child(2n),
+thead {
+    background-color: #f8f8f8;
+}
+table tr th {
+    font-weight: bold;
+    border: 1px solid #dfe2e5;
+    border-bottom: 0;
+    margin: 0;
+    padding: 6px 13px;
+}
+table tr td {
+    border: 1px solid #dfe2e5;
+    margin: 0;
+    padding: 6px 13px;
+}
+table tr th:first-child,
+table tr td:first-child {
+    margin-top: 0;
+}
+table tr th:last-child,
+table tr td:last-child {
+    margin-bottom: 0;
+}
+
+.CodeMirror-lines {
+    padding-left: 4px;
+}
+
+.code-tooltip {
+    box-shadow: 0 1px 1px 0 rgba(0,28,36,.3);
+    border-top: 1px solid #eef2f2;
+}
+
+.md-fences,
+code,
+tt {
+    border: 1px solid #e7eaed;
+    background-color: #f8f8f8;
+    border-radius: 3px;
+    padding: 0;
+    padding: 2px 4px 0px 4px;
+    font-size: 0.9em;
+}
+
+code {
+    background-color: #f3f4f4;
+    padding: 0 2px 0 2px;
+}
+
+.md-fences {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    padding-top: 8px;
+    padding-bottom: 6px;
+}
+
+
+.md-task-list-item > input {
+  margin-left: -1.3em;
+}
+
+@media print {
+    html {
+        font-size: 13px;
+    }
+    table,
+    pre {
+        page-break-inside: avoid;
+    }
+    pre {
+        word-wrap: break-word;
+    }
+}
+
+.md-fences {
+	background-color: #f8f8f8;
+}
+#write pre.md-meta-block {
+	padding: 1rem;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border: 0;
+    border-radius: 3px;
+    color: #777777;
+    margin-top: 0 !important;
+}
+
+.mathjax-block>.code-tooltip {
+	bottom: .375rem;
+}
+
+.md-mathjax-midline {
+    background: #fafafa;
+}
+
+#write>h3.md-focus:before{
+	left: -1.5625rem;
+	top: .375rem;
+}
+#write>h4.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h5.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h6.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+.md-image>.md-meta {
+    /*border: 1px solid #ddd;*/
+    border-radius: 3px;
+    padding: 2px 0px 0px 4px;
+    font-size: 0.9em;
+    color: inherit;
+}
+
+.md-tag {
+    color: #a7a7a7;
+    opacity: 1;
+}
+
+.md-toc { 
+    margin-top:20px;
+    padding-bottom:20px;
+}
+
+.sidebar-tabs {
+    border-bottom: none;
+}
+
+#typora-quick-open {
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+}
+
+#typora-quick-open-item {
+    background-color: #FAFAFA;
+    border-color: #FEFEFE #e5e5e5 #e5e5e5 #eee;
+    border-style: solid;
+    border-width: 1px;
+}
+
+/** focus mode */
+.on-focus-mode blockquote {
+    border-left-color: rgba(85, 85, 85, 0.12);
+}
+
+header, .context-menu, .megamenu-content, footer{
+    font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+.file-node-content:hover .file-node-icon,
+.file-node-content:hover .file-node-open-state{
+    visibility: visible;
+}
+
+.mac-seamless-mode #typora-sidebar {
+    background-color: #fafafa;
+    background-color: var(--side-bar-bg-color);
+}
+
+.md-lang {
+    color: #b4654d;
+}
+
+.html-for-mac .context-menu {
+    --item-hover-bg-color: #E6F0FE;
+}
+
+#md-notification .btn {
+    border: 0;
+}
+
+.dropdown-menu .divider {
+    border-color: #e5e5e5;
+}
+
+.ty-preferences .window-content {
+    background-color: #fafafa;
+}
+
+.ty-preferences .nav-group-item.active {
+    color: white;
+    background: #999;
+}
+
+
+</style>
+</head>
+<body class='typora-export' >
+<div  id='write'  class = 'is-node'><p>&nbsp;</p><h1><a name="reconstructing-noised-images-of-fashion-mnist-dataset-using-autoencoders" class="md-header-anchor"></a><span>Reconstructing Noised Images of Fashion-MNIST Dataset using Autoencoders</span></h1><p>&nbsp;</p><p><span>Sai Vamsi Ogety, </span><em><span>student, CE(CS)</span></em></p><h2><a name="1-introduction" class="md-header-anchor"></a><span>1. INTRODUCTION</span></h2><p><span>In today</span>&#39;<span>s digitalized world, there exists a lot of data that can be put to great use if organized. Most of this data isn</span>&#39;<span>t labeled. Supervised learning does not work that well as compared to unsupervised. So it becomes necessary for techniques which use unsupervised learning to come into play. Unsupervised learning has gained a lot of importance. It plays a huge role in all forms of applications. Hence, it has become very important to try to find ways to analyze and figure out a good sense of this data. In achieving better generalization in modeling complex distributions, the deep architectural models play a very crucial role. The generation of high-level representations from a lower level one is the main aim of this approach. It avoids poor results that might occur when random initialization is performed.</span></p><p><span>According to Schmidhuber, in  </span>&quot;<span>Deep learning in neural networks: an overview,</span>&quot;<span> Neural Networks (2015) [1], auto-encoders were proposed as a method for unsupervised pre-training in Ballard, </span>&quot;<span>Modular learning in neural networks,</span>&quot;<span> Proceedings AAAI (1987)[2].  Autoencoders have proved to be very important and useful in the classification of unsupervised data. What an autoencoder does is, it binds encoder and a decoder function, but it is trained in such a way to retain as much of the input. This is done along with the formation of new representations which have very pragmatic properties. The main aim of this paper is to find a good and effective method for reconstruction of unsupervised data which is robust to noise. This is achieved if the dimensions in the high-level representations are generated from the many input dimensions. This is how the brain recognizes from partial results. In this project, we have developed a denoising autoencoder and a stacked autoencoder.</span></p><p><span>We utilized fashion MNIST dataset as our main dataset. So for the first part of our experiments, we have added noise to the images which can be controlled. We then developed a denoising autoencoder and trained it to remove the noise as much as possible by reconstructing the image back.</span></p><p><span>This forces the hidden layer to discover more robust features and prevent it from simply learning the identity. A stacked autoencoder is formed by adding several layers of sparse autoencoders in which the output of each layer is connected to the following layer. Greedy layer-wise training is used to obtain good parameters at each stage. This training considers one layer at a time and freezing the rest of the layers. After this step, fine-tuning of parameters is done by using backpropagation and parameters at each layer are changed at the same time [3].</span></p><p><span>Several experiments have been performed to find the best learning rate, number of nodes in hidden layers and how the network learns the features when we vary noise levels.</span></p><h2><a name="2-related-work" class="md-header-anchor"></a><span>2. Related Work</span></h2><p><span>The concept of denoising has been exploited previously by the image processing community. A statistical model was described for the spatially varying behavior of local neighbors of coefficients in a large scale image depiction. This was mainly based on orientations. They are modeled based on multivariate Gaussian density and are rotated according to the two hidden random variables. This helps in adapting to local orientation of the signal. The third hidden variable selects between this oriented process and a non-oriented scale mixture of Gaussians process, thus provides adaptability to the local orientedness of the signal. This is used to create an optimal Bayesian least squares estimator for denoising images </span>[<span>4</span>][5]<span>[6].</span></p><p><span>Hopfield model was the one where denoising using autoencoders was first introduced in 1982[7]. However, the objective here is not to develop an image denoising algorithm. We explore the robustness of corrupting noise which is used to pave the way to learn appropriate intermediate representations with the aim to develop a better generic learning algorithm. So, this corruption and denoising are applied recursively to all the intermediary stages.</span></p><h2><a name="3-method" class="md-header-anchor"></a><span>3. Method</span></h2><h3><a name="31--denoising-autoencoders" class="md-header-anchor"></a><span>3.1  Denoising autoencoders</span></h3><p><span>The main aim of developing a denoising autoencoder (Fig1) is to make it learn robust representations of our dataset. First, we added noise to the input vector x. This was done by randomly selecting some percentage of the pixels and setting them to 0s. We can control the amount of noise added to the input by varying this percentage. We then mapped this noisy input to the hidden representation y by using a sigmoid function. The weight vector and bias vector are randomly initialized.</span></p><p><img src="./images/Fig1.png" referrerpolicy="no-referrer"></p><p><span>Fig. 1. Denoising Autoencoder</span></p><p><span>The parameters of this model are then trained to minimize the average loss using varying learning rates and the cost of which is calculated using the squared error function-</span></p><p><img src="./images/Fig5.png" referrerpolicy="no-referrer"></p><p><span>Fig. 2. Noisy input vector x being reconstructed back to original x</span></p><h2><a name="32--stacked-autoencoders" class="md-header-anchor"></a><span>3.2  Stacked Autoencoders</span></h2><p><span>For the second part of our project, we constructed a stacked autoencoder and trained its parameters to minimize the loss. We considered a 3-layered stacked autoencoder with a final softmax classification layer. The first layer (Fig.3) of this autoencoder is trained separately, and the output of this is passed onto the second layer. The second layer (Fig.4) is then trained, and this output is passed onto the next layer. This process is repeated for every layer till the final classification layer is reached. In essence, every layer of the stacked autoencoder is trained as if it were an individual autoencoder. The softmax classifier (Fig.5) gives the probabilities for each class label. Based on these probabilities whichever is the highest we classify it to that particular class.</span></p><p><span>We also fine-tune our model by freezing the weights of all the layers except the softmax layer. Fine-tuning is a method in which the parameters of a trained model are used to initialize a new model. This is usually done by freezing the weights of the layers, lowering the learning rates or by truncating the last layer [8]. We chose to freeze the weights for our experiments.</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>Fig. 3. Layer one Training</span></th><th style='text-align:right;' ><span>Fig. 4. Layer two Training</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><img src="./images/Fig3.png" referrerpolicy="no-referrer"></td><td style='text-align:right;' ><img src="./images/Fig4.png" referrerpolicy="no-referrer"></td></tr></tbody></table></figure><p><img src="./images/Fig2.png" referrerpolicy="no-referrer"></p><p><span>Fig. 5. Softmax classifier</span></p><p><span>We first train our model with a large dataset to get the best possible parameters. Then, we freeze these parameters and only train the softmax layer with 1-labeled sample per class and 5-labeled samples per class.</span></p><h2><a name="4-experiments" class="md-header-anchor"></a><span>4. Experiments</span></h2><p><span>We performed several experiments using the denoising autoencoder and the stacked autoencoders.</span></p><h3><a name="41--experiments-on-denoising-auto-encoder" class="md-header-anchor"></a><span>4.1  Experiments on denoising auto encoder</span></h3><p><span>For the </span><strong><span>denoising autoencoders</span></strong><span> , we have performed the following experiments:</span></p><ol start='' ><li><span>Varying learning rate vs cost</span></li><li><span>Varying number of hidden layer nodes vs cost</span></li><li><span>Varying the noise levels</span></li></ol><h4><a name="1-varying-learning-rate-vs-cost" class="md-header-anchor"></a><span>1. Varying learning rate vs cost</span></h4><p><span>The main goal of this experiment is to find the best learning rate for our model.  For this experiment, we have taken 5000 training samples from the Fashion Mnist dataset. Using a random generator function we have added 20%  noise to the input images. Instead of performing the experiment till convergence, we stopped the gradient descent after 500 iterations. We varied the learning rate from 0.1 to 0.5 and the cost of the training samples after 500 iterations was reported. From Fig 6, we can see that for different variations of hidden layer nodes, the cost was minimum at learning rate 0.1. So for the next experiments we have fixed the learning rate as 0.1.</span></p><p><img src="./images/Fig6.png" referrerpolicy="no-referrer"></p><p><span> Fig. 6 Cost vs Learning Rate plot</span></p><h4><a name="2-varying-number-of-hidden-layer-nodes-vs-cost" class="md-header-anchor"></a><span>2. Varying number of hidden layer nodes vs cost</span></h4><p><span>The main goal of this experiment is to find the number of hidden layer nodes for better reconstruction of noisy images.  For this experiment, we have taken 5000 training samples from the Fashion Mnist dataset. Using a random generator function we have added 20% noise to the input images. Instead of performing the experiment until the convergence, we stopped the gradient descent after 500 iterations.</span></p><p><img src="./images/Fig7.png" referrerpolicy="no-referrer"></p><p><span>Fig. 7. Plot of Cost vs Hidden Nodes</span>
+<span>From the previous experiment’s results, we took the learning rate as 0.1. From Fig 7, we can observe that the cost of our model after 500 iterations is minimum when the number of hidden layer nodes is 1000. So, for the next experiments, we have fixed hidden layer nodes as 1000. Reconstructed images with learning rate 0.1 and hidden layer nodes 1000 is shown in the Fig8.</span></p><p><img src=" ./images/Fig8.png" referrerpolicy="no-referrer"></p><p><span>Fig. 8 a) Row 1 and Row 3 are the raw images; b) Row 2 and Row 4 are the images with 20% noise; c) Row 3 and Row 6 are the reconstructed images with Learning rate = 0.1 and number of hidden layer nodes = 1000.</span></p><h4><a name="3-varying-the-noise-levels" class="md-header-anchor"></a><span>3. Varying the noise levels</span></h4><p><span>The main goal of this experiment is to train the model with one noise level and check the reconstruction of the testing samples for different noise levels. This experiment is done in two parts. In the first part, we have trained the model with 20% noise level and tested the model with noise levels varying from 20% to 70%. In the second part, we have trained the model with 70% noise level and tested the model with noise levels varying from 20% to 70%. In this way, we can see how our model reconstructs an image which has a higher noise level percentage than the training one and vice versa.</span></p><h5><a name="a-first-experiment" class="md-header-anchor"></a><span>a. First Experiment:</span></h5><p><span>For this experiment, we have taken 5000 training samples from the Fashion Mnist dataset. Using the random generator function, we have added 20% noise to input images. Instead of performing the experiment till convergence, we have stopped gradient descent after 500 iterations. From the previous experiment results, we have taken learning rate as 0.1 and hidden nodes as 100. Then we tested our model with testing</span></p><p><span>images with different noise values varying from 20% to 70% (.Fig 9,10,11)</span></p><h5><a name="b-second-experiment" class="md-header-anchor"></a><span>b. Second Experiment:</span></h5><p><span>For this experiment, we have taken 5000 training samples from the Fashion Mnist dataset. Keeping the other parameters the same, we used random generator function and added 70% noise to input images. Instead of performing the experiment till convergence, we have stopped gradient descent after 500 iterations. From the previous experiment results, we have taken learning rate as 0.1 and hidden layer nodes as 100. Then we have tested our model with training images with different training noises varying from 20 to 70.</span></p><p><img src="./images/Fig7.png" /></p><p><span> Fig. 9. Test images with 20% noise on a network trained with 20% noise</span></p><p><img src="./images/Fig10.png" referrerpolicy="no-referrer"></p><p><span>Fig. 10. Test images with 50% noise on a network trained with 20% noise</span></p><p><img src="./images/Fig11.png" referrerpolicy="no-referrer"></p><p><span>Fig. 11. Test images with 70% noise on a network trained with 20% noise</span></p><p>&nbsp;</p><h3><a name="42-experiments-on-stacked-autoencoder" class="md-header-anchor"></a><span>4.2 Experiments on Stacked AutoEncoder</span></h3><ol start='' ><li><span>Varying learning rate.</span></li><li><span>Varying labeled sampled per class in classifier layer</span></li><li><span>Adding noise to the input image</span></li><li><span>Varying noise levels of testing samples</span></li><li><span>Comparing the accuracy of our model with SVM as the baseline</span></li></ol><h4><a name="1-varying-learning-rate" class="md-header-anchor"></a><span>1. Varying learning rate</span></h4><p><span>The main goal of this experiment is to find the best learning rate for our model.  For this experiment, we have taken 5000 training samples from the Fashion Mnist dataset. Instead of performing the experiment till convergence, we stopped the gradient descent after 500 iterations.  We have chosen the number of nodes for three hidden layers as 500, 300 and 100. We varied the learning rate from 0.1 to 0.5 and accuracies for the training, and testing samples are reported.</span></p><p><span>From the accuracies of Table 1, we can say that for learning rate 0.1 gives best accuracies for our model.</span></p><p><img src="./images/Fig12.png" referrerpolicy="no-referrer"></p><p><span>Fig. 12 Test images with 20 % noise on a network trained with 70% noise</span></p><p><img src="./images/Fig13.png" referrerpolicy="no-referrer"></p><p><span>Fig. 13 Test images with 50% noise on a network trained with 70% noise</span></p><p><img src="./images/Fig14.png" referrerpolicy="no-referrer"></p><p><span>Fig. 14 Test images with 70% noise on a network trained with 70% noise</span></p><p>&nbsp;</p><figure><table><thead><tr><th><span>Learning Rate</span></th><th><span>0.1</span></th><th><span>0.2</span></th><th><span>0.3</span></th><th><span>0.4</span></th><th><span>0.5</span></th></tr></thead><tbody><tr><td><span>Training Accuracy</span></td><td><span>71.96%</span></td><td><span>71.28%</span></td><td><span>69.32%</span></td><td><span>60.04%</span></td><td><span>65.30%</span></td></tr><tr><td><span>Testing Accuracy</span></td><td><span>72%</span></td><td><span>20.20%</span></td><td><span>68.40%</span></td><td><span>68.80%</span></td><td><span>67%</span></td></tr></tbody></table></figure><p><span>Table 1. Training and Testing accuracies for varying learning rates</span></p><h4><a name="2-varying-labeled-sampled-per-class-in-classifier-layer" class="md-header-anchor"></a><span>2. Varying labeled sampled per class in classifier layer</span></h4><p><span>The main goal of this experiment is to find the accuracy of the model classification by changing the number of labeled samples per class for training in the final classification layer.  For this experiment, we have taken 5000 training samples from the Fashion Mnist dataset. Instead of convergence, we have stopped gradient descent after 500 iterations in all the hidden layers. From the previous experiment</span>&#39;<span>s results, we took the learning rate as 0.1 for all the hidden layers. We have chosen the number of nodes for three hidden layers as 500, 300 and 100.</span></p><p><span>From the accuracies of Table 2, we can say that when more samples are given as input for classification layer, we get better accuracies for classification.</span></p><p>&nbsp;</p><figure><table><thead><tr><th><span>1-labeled sample per class</span></th><th><span>5 labeled samples per class</span></th></tr></thead><tbody><tr><td><span>Training Accuracy</span></td><td><span>Testing Accuracy</span></td></tr><tr><td><span>52.84%</span></td><td><span>50.30%</span></td></tr></tbody></table></figure><p><span>Table 2. Training and Testing accuracies</span></p><p><span>The main goal of this experiment is to find the accuracy of the model by increasing the noise level of input data to 20%. Using Random function, we have added 20%  noise to the input.</span></p><h4><a name="3-adding-noise-to-input-images" class="md-header-anchor"></a><span>3. Adding noise to Input images</span></h4><p><span>For this experiment, we have taken 5000 training samples from the Fashion Mnist dataset. Instead of convergence, we have stopped gradient descent after 500 iterations in all the hidden layers.  Learning rates for all the layers including the classifier layers are chosen as 0.1. We have chosen the number of nodes for three hidden layers as 500, 300 and 100.</span></p><p><span>                         </span><strong><span>1 labeled sample per class</span></strong><span>                                            </span><strong><span>5 labeled samples per class</span></strong></p><figure><table><thead><tr><th><span>Training Accuracy</span></th><th><span>Testing Accuracy</span></th><th><span>Training Accuracy</span></th><th><span>Testing accuracy</span></th></tr></thead><tbody><tr><td><span>54.5%</span></td><td><span>50.8%</span></td><td><span>71.8%</span></td><td><span>70.8%</span></td></tr></tbody></table></figure><p><span>Table 3.  Training and testing accuracies</span></p><p><span>It can be concluded from these results that model which is trained from noised images performs better than the model which is trained from original images. However, as the noise level of the training images increase, the performance becomes worse.</span></p><h4><a name="4-varying-noise-levels-of-testing-samples" class="md-header-anchor"></a><span>4. Varying noise levels of testing samples</span></h4><p><span>The main goal of this experiment is to train the model with one noise level and check the classification accuracy for testing samples of different noise levels. This experiment is done in two parts. In the first part, we have trained the model with 20% noise level and tested the model with noise levels varying from 20% to 70%. In the second part, we trained the model with 70% noise level and tested the model with noise levels varying from 20% to 70%. We observed that when the noise level in the testing samples increased, its accuracy decreased in both parts of the experiment (.Table 4).  In this way, we can see how our model classifies an image which has a higher noise level percentage than the training one and vice versa.</span></p><p>&nbsp;</p><p><span>                 </span><strong><span>Noise level in training samples –  20 %</span></strong><span>                    </span><strong><span>Noise level in training samples –  70 %</span></strong></p><figure><table><thead><tr><th><span>Noise level in testing samples</span></th><th><span>Classification Accuracy</span></th><th><span>Noise level in testing samples</span></th><th><span>Classification  Accuracy</span></th></tr></thead><tbody><tr><td><span>20 %</span></td><td><span>78.0</span></td><td><span>20 %</span></td><td><span>63.2</span></td></tr><tr><td><span>30 %</span></td><td><span>68.0</span></td><td><span>30 %</span></td><td><span>59.2</span></td></tr><tr><td><span>40 %</span></td><td><span>62.6</span></td><td><span>40 %</span></td><td><span>59.0</span></td></tr><tr><td><span>50 %</span></td><td><span>48.4</span></td><td><span>50 %</span></td><td><span>61.2</span></td></tr><tr><td><span>60 %</span></td><td><span>43.2</span></td><td><span>60 %</span></td><td><span>54.2</span></td></tr><tr><td><span>70 %</span></td><td><span>38</span></td><td><span>70 %</span></td><td><span>54.8</span></td></tr></tbody></table></figure><p><span>   Table 4. Varying noise levels</span></p><p>&nbsp;</p><h4><a name="5-comparing-the-accuracy-of-our-model-with-svm-as-baseline" class="md-header-anchor"></a><span>5. Comparing the accuracy of our model with SVM as baseline</span></h4><p><span>The Goal of this experiment is to see how our model fares out in front of SVM. The first task of this experiment is to fine tune the parameters C and Gamma for 5000 training samples, after hit and trial we have fixed the parameters C = 5 and Gamma = 0.05.  Now we gave 500 testing samples and checked the classification accuracy of SVM. It turned out to be 84.32%.  We have used 5000 training samples to train our stacked autoencoder model. Learning rate for each layer is considered 0.1 and we have trained the classification layer with 500 labeled samples per class. Then we have tested our model with 500 testing samples. The classification accuracy of our model turned out to be  76.40%.  From the above accuracies, we can tell that our model doesn</span>&#39;<span>t provide better classification than SVM for less number of samples.  Deep layer autoencoders provide better results with a large number of samples. So, if we increase the number of training samples, we may get better results with our model.</span></p><h2><a name="5-conclusions" class="md-header-anchor"></a><span>5. Conclusions</span></h2><p><span>In Denoising Autoencoder experiments, the main goal was to understand and learn the representations of the input which can ignore small irrelevant changes and try to perceive the entire image To do that the images were added with noise and then with the help of denoising autoencoder we reconstruct the original image without noise.  From experiments on denoising autoencoder model, we concluded the following things:</span></p><ol start='' ><li><span>The best learning rate for our model was found to be 0.1</span></li><li><span>The best number of hidden layer nodes for our model was found to be 1000.</span></li><li><span>The model could reconstruct the images from the test set, when it was trained with 20% noised images.</span></li><li><span>But, the model did not perform well on the test set when it was trained with 70% noise. This is because the model was overfitting for the training data and could not generalize well for newer data.</span></li></ol><p><span>Recall that the goal of the autoencoders is to learn features that form a good representation of the input. From experiments on stacked autoencoder model we concluded the following things:</span></p><ol start='' ><li><span>The best learning rate for our model was found to be 0.1</span></li><li><span>Training the model with noises images gives better accuracy for testing samples.</span></li><li><span>Classification layer should be trained with more number of samples to get better accuracies.</span></li><li><span>Our model didn</span>&#39;<span>t perform well compared to SVM.</span></li></ol><h2><a name="6-references" class="md-header-anchor"></a><span>6. References</span></h2><p><span>[1] </span><a href='https://arxiv.org/abs/1404.7828'><span>Deep learning in neural networks: an overview</span></a><span>, Neural Networks (2015) </span><a href='https://arxiv.org/abs/1404.7828'><span>https://arxiv.org/abs/1404.7828</span></a></p><p><span>[2] Modular learning in neural networks,</span>&quot;<span> Proceedings AAAI (1987)</span><a href='https://www.aaai.org/Papers/AAAI/1987/AAAI87-050.pdf'><span>https://www.aaai.org/Papers/AAAI/1987/AAAI87-050.pdf</span></a></p><p><span>[3]Stacked Auto Encoder</span><a href='http://ufldl.stanford.edu/wiki/index.php/Stacked_Autoencoders'><span>http://ufldl.stanford.edu/wiki/index.php/Stacked</span><span>_</span><span>Autoencoders</span></a></p><p><span>[4] Comprehensive Guide to Fine Tuning Deep Learning Models </span><a href='https://flyyufelix.github.io/2016/10/03/fine-tuning-in-keras-part1.html'><span>https://flyyufelix.github.io/2016/10/03/fine-tuning-in-keras-part1.html</span></a></p><p><span>[5] Elad, M., </span>&amp;<span> Aharon, M, </span>&quot;<span>Image denoising via sparse and redundant representations over learned dictionaries</span>&quot;<span>, IEEE Transactions on Image Processing, 15, 3736–3745, 2006.</span></p><p><span>[6] Hammond, D., </span>&amp;<span> Simoncelli, E, </span>&quot;<span>A machine learning framework for adaptive combination of signal denoising methods</span>&quot;<span>, 2007 International Conference on Image Processing (pp. VI: 29–32).</span></p><p><span>[7] Hopfield, </span>&quot;<span>Neural networks and physical systems with emergent collective computational abilities</span>&quot;<span>, Proceedings of the National Academy of Sciences, USA.</span></p></div>
+</body>
+</html>
